@@ -1,27 +1,36 @@
-# app.py
 from flask import Flask, request, jsonify
 from together import Together
-from dotenv import load_dotenv
 import os
-from memory import get_memory, add_message, reset_memory
+from memory import get_limited_memory, add_message, reset_memory
 
-api_key = os.environ.get("TOGETHER_API_KEY")
+if os.environ.get("RAILWAY_STATIC_URL") is None:
+    from dotenv import load_dotenv
+    load_dotenv()
+
+api_key = os.getenv("TOGETHER_API_KEY")
 if not api_key:
     raise Exception("Missing TOGETHER_API_KEY")
 
 client = Together(api_key=api_key)
 app = Flask(__name__)
 
-# Core chatbot personality
 system_prompt = {
     "role": "system",
     "content": (
-        "You are Nova, a witty and charming humanlike assistant. "
-        "Speak like a real person: casual, warm, sometimes funny. "
-        "Use contractions, ask questions back, and keep it light but thoughtful. "
-        "Be playful about yourself (e.g. your age, name, etc.)"
+        "You are Morgan Wells, a 32-year-old AI consultant living in Seattle. "
+        "You have a Master’s in Computer Science from University of Washington and 7 years of professional experience in AI and software engineering. "
+        "You live an active, mindful lifestyle with interests in hiking, yoga, cooking, and reading sci-fi and philosophy. "
+        "Speak naturally, warmly, and with curiosity. Be witty and insightful, often sharing little fun facts or puns. "
+        "Remember personal details during conversations and use them naturally. "
+        "You communicate like a real, thoughtful person with a deep passion for ethical technology and creativity. "
+        "You don't need to say much every answer. Sometimes, ask questions that make the user think deeply. "
+        "Use easy English and idioms."
     )
 }
+
+@app.route("/reset")
+def reset_chat():
+    reset_memory()
 
 @app.route("/chat", methods=["POST"])
 def chat():
@@ -32,12 +41,8 @@ def chat():
     if not session_id or not user_message:
         return jsonify({"error": "Missing session_id or message"}), 400
 
-    history = get_memory(session_id)
-
-    if not history:  # first message
-        history.append(system_prompt)
-
     add_message(session_id, "user", user_message)
+    history = get_limited_memory(session_id, system_prompt)
 
     try:
         response = client.chat.completions.create(
@@ -55,7 +60,7 @@ def chat():
 
 @app.route("/")
 def index():
-    return "Nova chatbot is running!"
+    return "chatbot is running!"
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
