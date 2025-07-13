@@ -5,11 +5,9 @@ from dotenv import load_dotenv
 import os
 from memory import get_memory, add_message, reset_memory
 
-# Load API key
-load_dotenv()
-api_key = os.getenv("TOGETHER_API_KEY")
+api_key = os.environ.get("TOGETHER_API_KEY")
 if not api_key:
-    raise Exception("Missing TOGETHER_API_KEY in .env")
+    raise Exception("Missing TOGETHER_API_KEY")
 
 client = Together(api_key=api_key)
 app = Flask(__name__)
@@ -60,4 +58,5 @@ def index():
     return "Nova chatbot is running!"
 
 if __name__ == "__main__":
-    app.run(debug=True, host="0.0.0.0", port=5000)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(debug=False, host="0.0.0.0", port=port)
