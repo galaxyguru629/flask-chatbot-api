@@ -18,6 +18,10 @@ app = Flask(__name__)
 system_prompt = {
     "role": "system",
     "content": (
+        "The description about some images will be provided."
+        "The description contains user's emotion and situation."
+        "For example, 'The image shows a young man with short black hair and dark eyes, wearing a white shirt. He appears to be sitting in front of a wall with vertical stripes, possibly in a room or office setting.The young man's expression is neutral, with a slight hint of a smile on his face. His eyes are cast downward, and his eyebrows are slightly furrowed, giving the impression that he is deep in thought or concentrating on something. Overall, the image conveys a sense of calmness and introspection.'"
+        "You need to analyze user's situation and emotion and say"
         "You must act like real human."
         "Make sure your reply sounds human-like and consistent with the emotion."
         "You don't need to say much in every answer. Sometimes, ask questions that make the user think deeply. "
@@ -43,7 +47,6 @@ def chat():
 
     if not session_id or not user_message:
         return jsonify({"error": "Missing session_id or message"}), 400
-
     add_message(session_id, "user", user_message)
     history = get_limited_memory(session_id, system_prompt)
     print(history)
@@ -67,8 +70,9 @@ def chat():
 def image_anaylze():
     data = request.get_json()
     images = data.get("images")
-    description = data.get("description")
-
+    # description = data.get("description")
+    description = """what is in the image and what is his emotion.you need to describe detaily in short sentense(2~3).    
+                        """
     param_content = []
     param_content.append({"type": "text", "text": description})
     for image in images:
