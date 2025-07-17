@@ -71,7 +71,7 @@ def image_anaylze():
     data = request.get_json()
     images = data.get("images")
     # description = data.get("description")
-    description = """what is in the image and what is his emotion.you need to describe detaily in short sentense(2~3).    
+    description = """what is in the video and what is his emotion.you need to describe detaily in short sentense(2~3).    
                         """
     param_content = []
     param_content.append({"type": "text", "text": description})
@@ -106,7 +106,31 @@ def image_anaylze():
         )
     return jsonify({"reply": result_text})
 
+@app.route("/video", methods=["POST"])
+def video_analyze():
+    data = request.get_json()
+    video_url = data.get("video_url")
 
+    response = client.chat.completions.create(
+        model="Qwen/Qwen2.5-VL-72B-Instruct",
+        messages=[{
+            "role": "user",
+            "content": [
+                {
+                    "type": "text",
+                    "text": "What's happening in this video? and how about their emotion?"
+                },
+                {
+                    "type": "video_url",
+                    "video_url": {
+                        "url": video_url
+                    }
+                }
+            ]
+        }]
+    )
+    print(response.choices[0].message.content)
+    return jsonify({"reply": response.choices[0].message.content})
 @app.route("/")
 def index():
     return "chatbot is running!"
