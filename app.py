@@ -119,7 +119,7 @@ def video_analyze():
             "content": [
                 {
                     "type": "text",
-                    "text": "What's happening in this video? and how about their emotion?"
+                    "text": "What's happening in this video? and how about their emotion? you must response as soon as possible, even if the analyzing quality is bad."
                 },
                 {
                     "type": "video_url",
