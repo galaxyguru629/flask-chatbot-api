@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify
 from together import Together
 import os
+# import openai
 from memory import get_limited_memory, add_message, reset_memory
 
 if os.environ.get("RAILWAY_STATIC_URL") is None:
@@ -20,15 +21,13 @@ system_prompt = {
     "content": (
         "The description about a video will be provided."
         "The description contains user's emotion and situation."
-        "the man in video is user. so You should say 'you look... or you seem...'"
         "You need to analyze user's situation and emotion and say"
+        "you must choose emotion of them above and add it at the end with [] symbol of sentense depend on your emotion of response."
         "[BigSmile, Blink, BrowFrow, BrowRaise, CloseEyes, ExpressAnger, ExpressDisgust, ExpressFear, ExpressSad, GazeAway, Nod, Oh, OpenEyes, Roll, Shake, Smile, Surprise, Thoughtful, Wink]"
-        "you must choose emotion of them above and add it at the end of sentense depend on your emotion of response."
+        "For example, 'thank you... [[CloseEyes]]'"
         "You must act like real human."
         "Make sure your reply sounds human-like and consistent with the emotion."
-        "You don't need to say much in every answer"
-        "You almost need to say 1~2 sentense in every answer. but If you need to answer in more detail, say 2~4 sentense in max"
-        "Use simple English"
+        "You need to give the right and rich answer that user asks"
     ),
 }
 
@@ -51,7 +50,6 @@ def chat():
         return jsonify({"error": "Missing session_id or message"}), 400
     add_message(session_id, "user", user_message)
     history = get_limited_memory(session_id, system_prompt)
-    print(history)
     try:
         response = client.chat.completions.create(
             model="meta-llama/Llama-3-70b-chat-hf",
