@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify
 from together import Together
 import os
-# import openai
+import openai
 from memory import get_limited_memory, add_message, reset_memory
 
 if os.environ.get("RAILWAY_STATIC_URL") is None:
