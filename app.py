@@ -10,6 +10,7 @@ if os.environ.get("RAILWAY_STATIC_URL") is None:
     load_dotenv()
 
 api_key = os.getenv("TOGETHER_API_KEY")
+
 if not api_key:
     raise Exception("Missing TOGETHER_API_KEY")
 
@@ -51,14 +52,24 @@ def chat():
     add_message(session_id, "user", user_message)
     history = get_limited_memory(session_id, system_prompt)
     try:
-        response = client.chat.completions.create(
-            model="meta-llama/Llama-3-70b-chat-hf",
-            messages=history,
-            temperature=0.8,
-            max_tokens=512,
-            top_p=0.9,
+        # response = client.chat.completions.create(
+        #     model="meta-llama/Llama-3-70b-chat-hf",
+        #     messages=history,
+        #     temperature=0.8,
+        #     max_tokens=512,
+        #     top_p=0.9,
+        # )
+        # raw_reply = response.choices[0].message.content.strip()
+        
+        response = openai.ChatCompletion.create(
+            model="gpt-4",
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": history}
+            ],
         )
-        raw_reply = response.choices[0].message.content.strip()
+
+        raw_reply = response['choices'][0]['message']['content']
 
         add_message(session_id, "assistant", raw_reply)
         return jsonify({"reply": raw_reply})
