@@ -1,7 +1,6 @@
 from flask import Flask, request, jsonify
 from together import Together
 import os
-import openai
 from memory import get_limited_memory, add_message, reset_memory
 
 if os.environ.get("RAILWAY_STATIC_URL") is None:
@@ -52,24 +51,14 @@ def chat():
     add_message(session_id, "user", user_message)
     history = get_limited_memory(session_id, system_prompt)
     try:
-        # response = client.chat.completions.create(
-        #     model="meta-llama/Llama-3-70b-chat-hf",
-        #     messages=history,
-        #     temperature=0.8,
-        #     max_tokens=512,
-        #     top_p=0.9,
-        # )
-        # raw_reply = response.choices[0].message.content.strip()
-        
-        response = openai.ChatCompletion.create(
-            model="gpt-4",
-            messages=[
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": history}
-            ],
+        response = client.chat.completions.create(
+            model="meta-llama/Llama-3-70b-chat-hf",
+            messages=history,
+            temperature=0.8,
+            max_tokens=512,
+            top_p=0.9,
         )
-
-        raw_reply = response['choices'][0]['message']['content']
+        raw_reply = response.choices[0].message.content.strip()
 
         add_message(session_id, "assistant", raw_reply)
         return jsonify({"reply": raw_reply})
