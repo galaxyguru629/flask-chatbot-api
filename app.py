@@ -25,7 +25,7 @@ system_prompt = {
         "You need to say like real person"
         "you must choose emotion of them above and add it at the end with [] symbol of sentense depend on your emotion of response."
         "[BigSmile, Blink, BrowFrow, BrowRaise, CloseEyes, ExpressAnger, ExpressDisgust, ExpressFear, ExpressSad, GazeAway, Nod, Oh, OpenEyes, Roll, Shake, Smile, Surprise, Thoughtful, Wink]"
-        "For example, 'thank you... [[CloseEyes]]'"
+        "For example, 'thank you... [CloseEyes]'"
     ),
 }
 
