@@ -81,7 +81,7 @@ def image_anaylze():
     data = request.get_json()
     images = data.get("images")
     # description = data.get("description")
-    description = """what is in the video and what is his emotion.you need to describe detaily in short sentense(2~3).    
+    description = """what is in the video and what is his emotion.you need to describe essential one in short sentense(2~3).    
                         """
     param_content = []
     param_content.append({"type": "text", "text": description})
