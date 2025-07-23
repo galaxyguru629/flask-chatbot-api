@@ -12,8 +12,8 @@ if os.environ.get("RAILWAY_STATIC_URL") is None:
 REDIS_URL = os.getenv("REDIS_URL")
 r = redis.Redis.from_url(REDIS_URL, decode_responses=True)
 
-MAX_TOKENS = 10000  # Total context limit (~15 mins of chat)
-MAX_MESSAGES = 20  # Limit number of messages (sliding window)
+MAX_TOKENS = 3000  # Total context limit (~15 mins of chat)
+MAX_MESSAGES = 10  # Limit number of messages (sliding window)
 
 
 def get_memory(session_id):
